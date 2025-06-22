@@ -1,0 +1,903 @@
+{
+	"info": {
+		"_postman_id": "loanease-pro-api-collection",
+		"name": "LoanEase Pro API",
+		"description": "Complete API collection for LoanEase Pro loan management platform. This collection includes all endpoints for authentication, loan management, document handling, and admin operations.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "loanease-pro"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePassword123!\",\n  \"role\": \"borrower\",\n  \"phone\": \"+1234567890\",\n  \"address\": {\n    \"street\": \"123 Main St\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10001\",\n    \"country\": \"USA\"\n  },\n  \"dateOfBirth\": \"1990-01-15\",\n  \"employment\": {\n    \"employer\": \"Tech Corp\",\n    \"position\": \"Software Engineer\",\n    \"yearsEmployed\": 3.5,\n    \"monthlyIncome\": 8500\n  },\n  \"creditScore\": 750\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('authToken', response.token);",
+									"    pm.environment.set('userId', response.user._id);",
+									"    pm.environment.set('userRole', response.user.role);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"password\": \"SecurePassword123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Authenticate user and get JWT token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current authenticated user information"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Loans",
+			"item": [
+				{
+					"name": "Create Loan Application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('loanId', response.loan._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 50000,\n  \"term\": 60,\n  \"purpose\": \"Home improvement and renovation project\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/loans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loans"
+							]
+						},
+						"description": "Create a new loan application"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Loans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/loans?page=1&limit=10&status=submitted",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loans"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "status",
+									"value": "submitted",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all loans with admin access (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Status",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"suspended\",\n  \"reason\": \"Account suspended due to policy violation\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/{{userId}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"{{userId}}",
+								"status"
+							]
+						},
+						"description": "Update user account status (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Delete user account (admin only)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "API Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check API health status"
+					},
+					"response": []
+				},
+				{
+					"name": "API Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api"
+							]
+						},
+						"description": "Get API information and available endpoints"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global pre-request script",
+					"// Add any global setup here"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Global test script",
+					"pm.test('Response time is less than 5000ms', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(5000);",
+					"});",
+					"",
+					"pm.test('Response has correct content type', function () {",
+					"    if (pm.response.code !== 204) {",
+					"        pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+					"    }",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		}
+	]
+}
+									"value": "submitted",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all loans with pagination and filtering"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Loan by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/loans/{{loanId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"{{loanId}}"
+							]
+						},
+						"description": "Get specific loan details"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Loan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 55000,\n  \"term\": 72,\n  \"purpose\": \"Updated: Home improvement and kitchen renovation\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/loans/{{loanId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"{{loanId}}"
+							]
+						},
+						"description": "Update loan application details"
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Loan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comments\": \"Loan approved based on excellent credit score and stable income\",\n  \"interestRate\": 0.065\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/loans/{{loanId}}/approve",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"{{loanId}}",
+								"approve"
+							]
+						},
+						"description": "Approve a loan application (loan officer/admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Loan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"comments\": \"Loan rejected due to insufficient income verification\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/loans/{{loanId}}/reject",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"{{loanId}}",
+								"reject"
+							]
+						},
+						"description": "Reject a loan application (loan officer/admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Loan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/loans/{{loanId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"loans",
+								"{{loanId}}"
+							]
+						},
+						"description": "Delete a loan application"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Documents",
+			"item": [
+				{
+					"name": "Upload Document",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    pm.environment.set('documentId', response.document._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "type",
+									"value": "income_proof",
+									"type": "text"
+								},
+								{
+									"key": "loanId",
+									"value": "{{loanId}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"upload"
+							]
+						},
+						"description": "Upload a document file"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Documents",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents?type=income_proof&status=pending",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents"
+							],
+							"query": [
+								{
+									"key": "type",
+									"value": "income_proof",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "pending",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get documents for current user"
+					},
+					"response": []
+				},
+				{
+					"name": "Download Document",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/{{documentId}}/download",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"{{documentId}}",
+								"download"
+							]
+						},
+						"description": "Download a document file"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Document",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"verified\",\n  \"comments\": \"Document verified successfully. All information matches requirements.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/{{documentId}}/verify",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"{{documentId}}",
+								"verify"
+							]
+						},
+						"description": "Verify or reject a document (loan officer/admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Document",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/documents/{{documentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"documents",
+								"{{documentId}}"
+							]
+						},
+						"description": "Delete a document"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						},
+						"description": "Get current user profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"+1234567891\",\n  \"address\": {\n    \"street\": \"456 Oak Avenue\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"zipCode\": \"10002\",\n    \"country\": \"USA\"\n  },\n  \"employment\": {\n    \"employer\": \"Tech Corp Inc\",\n    \"position\": \"Senior Software Engineer\",\n    \"yearsEmployed\": 4.0,\n    \"monthlyIncome\": 9500\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/profile",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						},
+						"description": "Update current user profile"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Loans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/loans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"loans"
+							]
+						},
+						"description": "Get loans for current user"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User Account",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/account",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"account"
+							]
+						},
+						"description": "Delete current user account"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get Dashboard Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/dashboard",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"dashboard"
+							]
+						},
+						"description": "Get admin dashboard statistics (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/users?page=1&limit=20&role=borrower",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "role",
+									"value": "borrower",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get all users with pagination (admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Loans (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/loans?page=1&limit=20&status=submitted",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"loans"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "status",

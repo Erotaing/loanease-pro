@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "mongodb-memory-server": "^10.1.4"
+  },
+  "scripts": {
+    "dev:all": "concurrently \"npm run dev:server\" \"npm run dev:client\" \"npm run dev:ai\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "dev:ai": "cd ai-services && python -m http.server 8080"
+  }
+}

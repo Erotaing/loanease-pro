@@ -1,0 +1,1456 @@
+openapi: 3.0.3
+info:
+  title: LoanEase Pro API
+  description: |
+    Professional loan management and application platform API.
+    
+    This API provides comprehensive endpoints for:
+    - User authentication and management
+    - Loan application processing
+    - Document upload and verification
+    - Administrative operations
+    - Risk assessment and decision making
+    
+    ## Authentication
+    Most endpoints require JWT authentication. Include the token in the Authorization header:
+    ```
+    Authorization: Bearer <your-jwt-token>
+    ```
+    
+    ## Rate Limiting
+    API requests are rate-limited to prevent abuse. Current limits:
+    - 100 requests per minute for authenticated users
+    - 20 requests per minute for unauthenticated users
+    
+    ## Error Handling
+    The API uses standard HTTP status codes and returns error details in JSON format:
+    ```json
+    {
+      "message": "Error description",
+      "error": "Detailed error information"
+    }
+    ```
+  version: 1.0.0
+  contact:
+    name: LoanEase Pro Support
+    email: support@loaneasepro.com
+    url: https://loaneasepro.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:5000/api
+    description: Development server
+  - url: https://api.loaneasepro.com
+    description: Production server
+
+paths:
+  # Authentication Endpoints
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      description: Create a new user account in the system
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - firstName
+                - lastName
+                - email
+                - password
+              properties:
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                email:
+                  type: string
+                  format: email
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePass123!
+                role:
+                  type: string
+                  enum: [borrower, loan_officer, admin]
+                  default: borrower
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: User already exists or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and receive JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  format: password
+                  example: SecurePass123!
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/me:
+    get:
+      tags:
+        - Authentication
+      summary: Get current user
+      description: Retrieve current authenticated user information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Loan Endpoints
+  /loans:
+    post:
+      tags:
+        - Loans
+      summary: Create a new loan application
+      description: Submit a new loan application
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRequest'
+      responses:
+        '201':
+          description: Loan application created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    get:
+      tags:
+        - Loans
+      summary: Get loans
+      description: Retrieve loans (filtered by user role)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by loan status
+          schema:
+            type: string
+            enum: [draft, submitted, approved, rejected, disbursed]
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Loans retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loans:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Loan'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /loans/{id}:
+    get:
+      tags:
+        - Loans
+      summary: Get loan by ID
+      description: Retrieve a specific loan application
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Loan ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Loan retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Loan not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Loans
+      summary: Update loan application
+      description: Update an existing loan application
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Loan ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanRequest'
+      responses:
+        '200':
+          description: Loan updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Loan not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Loans
+      summary: Delete loan application
+      description: Delete a loan application (only drafts)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Loan ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Loan deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Loan deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Loan not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /loans/{id}/approve:
+    put:
+      tags:
+        - Loans
+      summary: Approve loan application
+      description: Approve a loan application (admin/loan officer only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Loan ID
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comments:
+                  type: string
+                  example: Loan approved based on excellent credit score
+      responses:
+        '200':
+          description: Loan approved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Loan not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /loans/{id}/reject:
+    put:
+      tags:
+        - Loans
+      summary: Reject loan application
+      description: Reject a loan application (admin/loan officer only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Loan ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - comments
+              properties:
+                comments:
+                  type: string
+                  example: Insufficient income to support loan amount
+      responses:
+        '200':
+          description: Loan rejected successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loan'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Loan not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # User Endpoints
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: Get user profile
+      description: Retrieve current user's profile information
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      tags:
+        - Users
+      summary: Update user profile
+      description: Update current user's profile information
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: Profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Users
+      summary: Delete user account
+      description: Delete current user's account
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Account deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Account deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /users/loans:
+    get:
+      tags:
+        - Users
+      summary: Get user's loans
+      description: Retrieve all loans for the current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by loan status
+          schema:
+            type: string
+            enum: [draft, submitted, approved, rejected, disbursed]
+      responses:
+        '200':
+          description: User loans retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Loan'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Document Endpoints
+  /documents/upload:
+    post:
+      tags:
+        - Documents
+      summary: Upload document
+      description: Upload a document for loan application
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - type
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Document file to upload
+                type:
+                  type: string
+                  enum: [id_proof, income_proof, address_proof, bank_statement, tax_return, other]
+                  description: Type of document
+                loanId:
+                  type: string
+                  description: Associated loan ID (optional)
+                name:
+                  type: string
+                  description: Custom document name
+      responses:
+        '201':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Validation error or file upload error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /documents:
+    get:
+      tags:
+        - Documents
+      summary: Get documents
+      description: Retrieve user's documents
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: loanId
+          in: query
+          description: Filter by loan ID
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Filter by document type
+          schema:
+            type: string
+            enum: [id_proof, income_proof, address_proof, bank_statement, tax_return, other]
+        - name: status
+          in: query
+          description: Filter by verification status
+          schema:
+            type: string
+            enum: [pending, verified, rejected]
+      responses:
+        '200':
+          description: Documents retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /documents/{id}:
+    get:
+      tags:
+        - Documents
+      summary: Get document by ID
+      description: Retrieve a specific document
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Document ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - Documents
+      summary: Delete document
+      description: Delete a document
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Document ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Document deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /documents/{id}/download:
+    get:
+      tags:
+        - Documents
+      summary: Download document
+      description: Download a document file
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Document ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Document file
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Admin Endpoints
+  /admin/dashboard:
+    get:
+      tags:
+        - Admin
+      summary: Get dashboard statistics
+      description: Retrieve administrative dashboard statistics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Dashboard statistics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardStats'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/users:
+    get:
+      tags:
+        - Admin
+      summary: Get all users
+      description: Retrieve all users (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: role
+          in: query
+          description: Filter by user role
+          schema:
+            type: string
+            enum: [borrower, loan_officer, admin]
+      responses:
+        '200':
+          description: Users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/users/{id}:
+    get:
+      tags:
+        - Admin
+      summary: Get user by ID
+      description: Retrieve a specific user (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/users/{id}/status:
+    put:
+      tags:
+        - Admin
+      summary: Update user status
+      description: Update user account status (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [active, suspended, inactive]
+                reason:
+                  type: string
+                  example: Account suspended due to policy violation
+      responses:
+        '200':
+          description: User status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /admin/loans:
+    get:
+      tags:
+        - Admin
+      summary: Get all loans
+      description: Retrieve all loan applications (admin only)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: Number of items per page
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: status
+          in: query
+          description: Filter by loan status
+          schema:
+            type: string
+            enum: [draft, submitted, approved, rejected, disbursed]
+      responses:
+        '200':
+          description: Loans retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  loans:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Loan'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authentication
+
+  schemas:
+    # Authentication Schemas
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT authentication token
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        user:
+          $ref: '#/components/schemas/UserBasic'
+
+    UserBasic:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User unique identifier
+          example: 507f1f77bcf86cd799439011
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        email:
+          type: string
+          format: email
+          example: john.doe@example.com
+        role:
+          type: string
+          enum: [borrower, loan_officer, admin]
+          example: borrower
+
+    # User Schemas
+    User:
+      allOf:
+        - $ref: '#/components/schemas/UserBasic'
+        - type: object
+          properties:
+            phone:
+              type: string
+              example: +1-555-123-4567
+            address:
+              $ref: '#/components/schemas/Address'
+            dateOfBirth:
+              type: string
+              format: date
+              example: 1990-01-15
+            employmentInfo:
+              $ref: '#/components/schemas/EmploymentInfo'
+            creditScore:
+              type: integer
+              minimum: 300
+              maximum: 850
+              example: 720
+            createdAt:
+              type: string
+              format: date-time
+              example: 2023-01-15T10:30:00Z
+            updatedAt:
+              type: string
+              format: date-time
+              example: 2023-01-15T10:30:00Z
+
+    UserUpdateRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: Doe
+        phone:
+          type: string
+          example: +1-555-123-4567
+        address:
+          $ref: '#/components/schemas/Address'
+        dateOfBirth:
+          type: string
+          format: date
+          example: 1990-01-15
+        employmentInfo:
+          $ref: '#/components/schemas/EmploymentInfo'
+
+    Address:
+      type: object
+      properties:
+        street:
+          type: string
+          example: 123 Main Street
+        city:
+          type: string
+          example: New York
+        state:
+          type: string
+          example: NY
+        zipCode:
+          type: string
+          example: 10001
+        country:
+          type: string
+          example: USA
+
+    EmploymentInfo:
+      type: object
+      properties:
+        employer:
+          type: string
+          example: Tech Corp Inc.
+        position:
+          type: string
+          example: Software Engineer
+        yearsEmployed:
+          type: number
+          example: 3.5
+        monthlyIncome:
+          type: number
+          example: 8500.00
+
+    # Loan Schemas
+    Loan:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Loan unique identifier
+          example: 507f1f77bcf86cd799439011
+        user:
+          oneOf:
+            - type: string
+              description: User ID reference
+            - $ref: '#/components/schemas/UserBasic'
+        amount:
+          type: number
+          description: Loan amount in USD
+          example: 50000.00
+        term:
+          type: integer
+          description: Loan term in months
+          example: 60
+        purpose:
+          type: string
+          description: Purpose of the loan
+          example: Home improvement
+        status:
+          type: string
+          enum: [draft, submitted, approved, rejected, disbursed]
+          example: submitted
+        documents:
+          type: array
+          items:
+            oneOf:
+              - type: string
+                description: Document ID reference
+              - $ref: '#/components/schemas/Document'
+        riskScore:
+          type: number
+          description: Calculated risk score
+          example: 0.25
+        decision:
+          $ref: '#/components/schemas/LoanDecision'
+        createdAt:
+          type: string
+          format: date-time
+          example: 2023-01-15T10:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-01-15T10:30:00Z
+
+    LoanRequest:
+      type: object
+      required:
+        - amount
+        - term
+        - purpose
+      properties:
+        amount:
+          type: number
+          minimum: 1000
+          maximum: 1000000
+          description: Loan amount in USD
+          example: 50000.00
+        term:
+          type: integer
+          minimum: 6
+          maximum: 360
+          description: Loan term in months
+          example: 60
+        purpose:
+          type: string
+          minLength: 10
+          maxLength: 500
+          description: Purpose of the loan
+          example: Home improvement and renovation
+
+    LoanDecision:
+      type: object
+      properties:
+        by:
+          oneOf:
+            - type: string
+              description: Decision maker user ID
+            - $ref: '#/components/schemas/UserBasic'
+        at:
+          type: string
+          format: date-time
+          example: 2023-01-20T14:30:00Z
+        comments:
+          type: string
+          example: Approved based on excellent credit history
+
+    # Document Schemas
+    Document:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Document unique identifier
+          example: 507f1f77bcf86cd799439011
+        user:
+          oneOf:
+            - type: string
+              description: User ID reference
+            - $ref: '#/components/schemas/UserBasic'
+        loan:
+          oneOf:
+            - type: string
+              description: Loan ID reference
+            - $ref: '#/components/schemas/Loan'
+        name:
+          type: string
+          description: Document name
+          example: Driver License - John Doe
+        type:
+          type: string
+          enum: [id_proof, income_proof, address_proof, bank_statement, tax_return, other]
+          example: id_proof
+        fileUrl:
+          type: string
+          description: URL to access the document file
+          example: /uploads/documents/507f1f77bcf86cd799439011.pdf
+        mimeType:
+          type: string
+          description: MIME type of the document
+          example: application/pdf
+        size:
+          type: integer
+          description: File size in bytes
+          example: 2048576
+        uploadedAt:
+          type: string
+          format: date-time
+          example: 2023-01-15T10:30:00Z
+        status:
+          type: string
+          enum: [pending, verified, rejected]
+          example: pending
+        verifiedBy:
+          oneOf:
+            - type: string
+              description: Verifier user ID
+            - $ref: '#/components/schemas/UserBasic'
+        verifiedAt:
+          type: string
+          format: date-time
+          example: 2023-01-16T09:15:00Z
+        ocrData:
+          type: object
+          description: Extracted data from OCR processing
+          additionalProperties: true
+        metadata:
+          type: object
+          description: Additional document metadata
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+          example: 2023-01-15T10:30:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2023-01-15T10:30:00Z
+
+    # Admin Schemas
+    DashboardStats:
+      type: object
+      properties:
+        totalUsers:
+          type: integer
+          description: Total number of users
+          example: 1250
+        totalLoans:
+          type: integer
+          description: Total number of loan applications
+          example: 850
+        pendingLoans:
+          type: integer
+          description: Number of pending loan applications
+          example: 45
+        approvedLoans:
+          type: integer
+          description: Number of approved loans
+          example: 520
+        rejectedLoans:
+          type: integer
+          description: Number of rejected loans
+          example: 285
+        totalLoanAmount:
+          type: number
+          description: Total amount of all loans
+          example: 42500000.00
+        averageLoanAmount:
+          type: number
+          description: Average loan amount
+          example: 50000.00
+        averageProcessingTime:
+          type: number
+          description: Average processing time in days
+          example: 7.5
+        monthlyStats:
+          type: array
+          description: Monthly statistics for the last 12 months
+          items:
+            type: object
+            properties:
+              month:
+                type: string
+                example: 2023-01
+              applications:
+                type: integer
+                example: 75
+              approvals:
+                type: integer
+                example: 45
+              rejections:
+                type: integer
+                example: 30
+              totalAmount:
+                type: number
+                example: 3750000.00
+
+    # Common Schemas
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        limit:
+          type: integer
+          description: Number of items per page
+          example: 10
+        total:
+          type: integer
+          description: Total number of items
+          example: 150
+        pages:
+          type: integer
+          description: Total number of pages
+          example: 15
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: Validation failed
+        error:
+          type: string
+          description: Detailed error information
+          example: Email is required
+        code:
+          type: string
+          description: Error code
+          example: VALIDATION_ERROR
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+          example: 2023-01-15T10:30:00Z
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Users
+    description: User profile management
+  - name: Loans
+    description: Loan application management
+  - name: Documents
+    description: Document upload and management
+  - name: Admin
+    description: Administrative operations
+
+externalDocs:
+  description: LoanEase Pro Documentation
+  url: https://docs.loaneasepro.com

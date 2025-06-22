@@ -1,0 +1,58 @@
+{
+  "name": "loanease-pro-server",
+  "version": "1.0.0",
+  "description": "Backend server for LoanEase Pro application",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node dist/src/server.js",
+    "dev": "nodemon src/server.ts",
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/mongoose": "^5.11.97",
+    "axios": "^1.10.0",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.10.0",
+    "express-validator": "^7.2.1",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^7.8.7",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/jest": "^29.5.3",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^20.5.0",
+    "@types/nodemailer": "^6.4.9",
+    "jest": "^29.6.2",
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^3.1.10",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.1.6"
+  },
+  "keywords": [
+    "loan",
+    "finance",
+    "api",
+    "nodejs",
+    "express",
+    "mongodb"
+  ],
+  "author": "LoanEase Pro Team",
+  "license": "MIT"
+}

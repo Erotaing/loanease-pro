@@ -373,7 +373,7 @@ const LandingPage: React.FC = () => {
                   size="large"
                   sx={{
                     bgcolor: 'white',
-                    color: 'primary.main',
+                    color: 'white',
                     px: 4,
                     py: 1.5,
                     fontSize: '1.1rem',
@@ -594,7 +594,7 @@ const LandingPage: React.FC = () => {
               size="large"
               sx={{
                 bgcolor: 'white',
-                color: 'primary.main',
+                color: 'white',
                 px: 4,
                 py: 1.5,
                 fontSize: '1.1rem',

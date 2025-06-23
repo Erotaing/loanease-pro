@@ -108,12 +108,15 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [], maxIte
   const isAdmin = userRole === 'admin';
   
   // Mock data if no activities provided - role-based
+  // Use static base date to prevent hydration mismatches
+  const baseDate = new Date('2024-01-15T10:00:00Z');
+  
   const mockActivities: Activity[] = isAdmin ? [
     {
       _id: '1',
       type: 'loan_application',
       description: 'New loan application submitted',
-      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+      timestamp: new Date(baseDate.getTime() - 1000 * 60 * 30).toISOString(),
       user: { name: 'John Doe', email: 'john@example.com' },
       loan: { _id: 'loan1', amount: 50000 }
     },
@@ -121,7 +124,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [], maxIte
       _id: '2',
       type: 'status_change',
       description: 'Loan application approved',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+      timestamp: new Date(baseDate.getTime() - 1000 * 60 * 60 * 2).toISOString(),
       status: 'approved',
       user: { name: 'Jane Smith', email: 'jane@example.com' },
       loan: { _id: 'loan2', amount: 25000 }
@@ -130,14 +133,14 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [], maxIte
       _id: '3',
       type: 'user_registration',
       description: 'New user registered',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
+      timestamp: new Date(baseDate.getTime() - 1000 * 60 * 60 * 4).toISOString(),
       user: { name: 'Mike Johnson', email: 'mike@example.com' }
     },
     {
       _id: '4',
       type: 'status_change',
       description: 'Loan application rejected',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
+      timestamp: new Date(baseDate.getTime() - 1000 * 60 * 60 * 6).toISOString(),
       status: 'rejected',
       user: { name: 'Sarah Wilson', email: 'sarah@example.com' },
       loan: { _id: 'loan3', amount: 75000 }
@@ -147,14 +150,14 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [], maxIte
       _id: '1',
       type: 'loan_application',
       description: 'Your loan application was submitted',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
+      timestamp: new Date(baseDate.getTime() - 1000 * 60 * 60 * 2).toISOString(),
       loan: { _id: 'loan1', amount: 50000 }
     },
     {
       _id: '2',
       type: 'status_change',
       description: 'Your application is under review',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+      timestamp: new Date(baseDate.getTime() - 1000 * 60 * 60 * 24).toISOString(),
       status: 'under_review',
       loan: { _id: 'loan1', amount: 50000 }
     },
@@ -162,7 +165,7 @@ const RecentActivity: React.FC<RecentActivityProps> = ({ activities = [], maxIte
       _id: '3',
       type: 'document_upload',
       description: 'Documents uploaded successfully',
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString()
+      timestamp: new Date(baseDate.getTime() - 1000 * 60 * 60 * 48).toISOString()
     }
   ];
 

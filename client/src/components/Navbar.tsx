@@ -26,6 +26,8 @@ import {
   Dashboard as DashboardIcon,
   AccountBalance as AccountBalanceIcon,
   Close as CloseIcon,
+  Login as LoginIcon,
+  Calculate as CalculateIcon,
 } from '@mui/icons-material';
 
 const Navbar: React.FC = () => {
@@ -36,6 +38,7 @@ const Navbar: React.FC = () => {
 
   const menuItems = [
     { text: 'Home', path: '/', icon: <HomeIcon /> },
+    { text: 'Calculator', path: '/calculator', icon: <CalculateIcon /> },
     { text: 'Dashboard', path: '/dashboard', icon: <DashboardIcon /> },
     { text: 'Applications', path: '/applications', icon: <DescriptionIcon /> },
     { text: 'Borrowers', path: '/borrowers', icon: <PersonIcon /> },
@@ -67,33 +70,66 @@ const Navbar: React.FC = () => {
       <List sx={{ p: 2 }}>
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
-            <Link href={item.path} passHref style={{ textDecoration: 'none', width: '100%' }}>
-              <ListItemButton 
-                onClick={handleDrawerToggle}
-                selected={isActivePath(item.path)}
-                sx={{
-                  borderRadius: 2,
-                  '&.Mui-selected': {
-                    bgcolor: 'primary.50',
+            <ListItemButton 
+              component={Link}
+              href={item.path}
+              onClick={handleDrawerToggle}
+              selected={isActivePath(item.path)}
+              sx={{
+                borderRadius: 2,
+                textDecoration: 'none',
+                width: '100%',
+                '&.Mui-selected': {
+                  bgcolor: 'primary.50',
+                  color: 'primary.700',
+                  '& .MuiListItemIcon-root': {
                     color: 'primary.700',
-                    '& .MuiListItemIcon-root': {
-                      color: 'primary.700',
-                    },
                   },
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
+              <ListItemText 
+                primary={item.text} 
+                primaryTypographyProps={{
+                  fontSize: '0.875rem',
+                  fontWeight: 500,
                 }}
-              >
-                <ListItemIcon sx={{ minWidth: 40 }}>{item.icon}</ListItemIcon>
-                <ListItemText 
-                  primary={item.text} 
-                  primaryTypographyProps={{
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                  }}
-                />
-              </ListItemButton>
-            </Link>
+              />
+            </ListItemButton>
           </ListItem>
         ))}
+        
+        {/* Login/Signup Button for Mobile */}
+        <ListItem disablePadding sx={{ mt: 2 }}>
+          <ListItemButton 
+            component={Link}
+            href="/login"
+            onClick={handleDrawerToggle}
+            sx={{
+              borderRadius: 2,
+              bgcolor: 'primary.main',
+              color: 'white',
+              textDecoration: 'none',
+              width: '100%',
+              '&:hover': {
+                bgcolor: 'primary.dark',
+              },
+              '& .MuiListItemIcon-root': {
+                color: 'white',
+              },
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 40 }}><LoginIcon /></ListItemIcon>
+            <ListItemText 
+              primary="Login / Sign Up" 
+              primaryTypographyProps={{
+                fontSize: '0.875rem',
+                fontWeight: 600,
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
       </List>
     </Box>
   );
@@ -144,38 +180,67 @@ const Navbar: React.FC = () => {
                 <MenuIcon />
               </IconButton>
             ) : (
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 {menuItems.map((item) => (
-                  <Link key={item.text} href={item.path} passHref style={{ textDecoration: 'none' }}>
-                    <Button
-                      startIcon={item.icon}
-                      variant={isActivePath(item.path) ? 'contained' : 'text'}
-                      sx={{
-                        px: 3,
-                        py: 1,
-                        fontSize: '0.875rem',
-                        fontWeight: 500,
-                        textTransform: 'none',
-                        borderRadius: 2,
-                        ...(isActivePath(item.path) ? {
-                          bgcolor: 'primary.main',
-                          color: 'white',
-                          '&:hover': {
-                            bgcolor: 'primary.dark',
-                          },
-                        } : {
-                          color: 'text.secondary',
-                          '&:hover': {
-                            bgcolor: 'primary.50',
-                            color: 'primary.main',
-                          },
-                        }),
-                      }}
-                    >
-                      {item.text}
-                    </Button>
-                  </Link>
+                  <Button
+                    key={item.text}
+                    component={Link}
+                    href={item.path}
+                    startIcon={item.icon}
+                    variant={isActivePath(item.path) ? 'contained' : 'text'}
+                    sx={{
+                      px: 3,
+                      py: 1,
+                      fontSize: '0.875rem',
+                      fontWeight: 500,
+                      textTransform: 'none',
+                      textDecoration: 'none',
+                      borderRadius: 2,
+                      ...(isActivePath(item.path) ? {
+                        bgcolor: 'primary.main',
+                        color: 'white',
+                        '&:hover': {
+                          bgcolor: 'primary.dark',
+                        },
+                      } : {
+                        color: 'text.secondary',
+                        '&:hover': {
+                          bgcolor: 'primary.50',
+                          color: 'primary.main',
+                        },
+                      }),
+                    }}
+                  >
+                    {item.text}
+                  </Button>
                 ))}
+                
+                {/* Login/Signup Button */}
+                <Button
+                  component={Link}
+                  href="/login"
+                  startIcon={<LoginIcon />}
+                  variant="outlined"
+                  sx={{
+                    px: 3,
+                    py: 1,
+                    fontSize: '0.875rem',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    textDecoration: 'none',
+                    borderRadius: 2,
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
+                    ml: 1,
+                    '&:hover': {
+                      bgcolor: 'primary.main',
+                      color: 'white',
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                >
+                  Login / Sign Up
+                </Button>
               </Box>
             )}
           </Toolbar>

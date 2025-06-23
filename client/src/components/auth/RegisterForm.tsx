@@ -345,20 +345,20 @@ const RegisterForm: React.FC = () => {
                 }}
               >
                 Already have an account?{' '}
-                <Link href="/login" passHref>
-                  <MuiLink
-                    sx={{
-                      color: theme.palette.primary.main,
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                      '&:hover': {
-                        textDecoration: 'underline'
+                <MuiLink
+                  component={Link}
+                  href="/login"
+                  sx={{
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    '&:hover': {
+                      textDecoration: 'underline'
                       }
                     }}
                   >
                     Sign in here
                   </MuiLink>
-                </Link>
               </Typography>
             </Box>
           </CardContent>

@@ -23,6 +23,9 @@ import {
   Alert,
   Divider,
   InputAdornment,
+  Stack,
+  useTheme,
+  alpha,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {
@@ -32,7 +35,15 @@ import {
   Schedule as ScheduleIcon,
   Assessment as AssessmentIcon,
   Info as InfoIcon,
+  AccountBalance,
+  Group,
+  Star,
+  Speed,
+  CheckCircle,
+  Verified,
+  ArrowForward,
 } from '@mui/icons-material';
+import Link from 'next/link';
 import Layout from '../components/Layout';
 import { formatCurrency } from '../lib/utils';
 
@@ -61,6 +72,7 @@ interface LoanScenario {
 }
 
 const LoanCalculator: React.FC = () => {
+  const theme = useTheme();
   const [loanAmount, setLoanAmount] = useState<number>(50000);
   const [loanTerm, setLoanTerm] = useState<number>(60); // months
   const [interestRate, setInterestRate] = useState<number>(7.5);
@@ -439,6 +451,181 @@ const LoanCalculator: React.FC = () => {
                   </CardContent>
                 </Card>
               )}
+
+              {/* LoanEase Pro Statistics & Trust Section */}
+              <Card 
+                sx={{ 
+                  borderRadius: 3, 
+                  boxShadow: 3,
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                  color: 'white',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+                    opacity: 0.3,
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 4, position: 'relative', zIndex: 1 }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      mb: 2, 
+                      fontWeight: 700, 
+                      textAlign: 'center',
+                      fontFamily: 'Poppins',
+                    }}
+                  >
+                    Ready to Apply? Join Thousands of Satisfied Customers
+                  </Typography>
+                  
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      mb: 4, 
+                      textAlign: 'center',
+                      color: alpha(theme.palette.common.white, 0.9),
+                      fontWeight: 400,
+                    }}
+                  >
+                    LoanEase Pro has helped thousands of customers secure their financial goals
+                  </Typography>
+
+                  {/* Statistics Grid */}
+                  <Grid container spacing={3} sx={{ mb: 4 }}>
+                    <Grid size={{ xs: 6, md: 3 }}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <AccountBalance sx={{ fontSize: 48, mb: 1, color: theme.palette.secondary.light }} />
+                        <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: 'Poppins' }}>
+                          $5.2B+
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
+                          Loans Processed
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    
+                    <Grid size={{ xs: 6, md: 3 }}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Group sx={{ fontSize: 48, mb: 1, color: theme.palette.secondary.light }} />
+                        <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: 'Poppins' }}>
+                          150K+
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
+                          Happy Customers
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    
+                    <Grid size={{ xs: 6, md: 3 }}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Star sx={{ fontSize: 48, mb: 1, color: '#FFD700' }} />
+                        <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: 'Poppins' }}>
+                          4.9/5
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
+                          Customer Rating
+                        </Typography>
+                      </Box>
+                    </Grid>
+                    
+                    <Grid size={{ xs: 6, md: 3 }}>
+                      <Box sx={{ textAlign: 'center' }}>
+                        <Speed sx={{ fontSize: 48, mb: 1, color: theme.palette.secondary.light }} />
+                        <Typography variant="h4" sx={{ fontWeight: 800, fontFamily: 'Poppins' }}>
+                          &lt; 2hrs
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
+                          Avg. Processing Time
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  </Grid>
+
+                  {/* Trust Indicators */}
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 4, flexWrap: 'wrap', mb: 4 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Verified sx={{ color: theme.palette.secondary.light, fontSize: 20 }} />
+                      <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.9) }}>
+                        SOC 2 Compliant
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <CheckCircle sx={{ color: theme.palette.success.light, fontSize: 20 }} />
+                      <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.9) }}>
+                        99.9% Uptime
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Star sx={{ color: '#FFD700', fontSize: 20 }} />
+                      <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.9) }}>
+                        Award Winning Platform
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {/* Call to Action */}
+                  <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'center' }}>
+                    <Link href="/apply">
+                      <Button
+                        variant="contained"
+                        size="large"
+                        endIcon={<ArrowForward />}
+                        sx={{
+                          bgcolor: 'white',
+                          color: theme.palette.primary.main,
+                          px: 4,
+                          py: 1.5,
+                          fontSize: '1.1rem',
+                          fontWeight: 700,
+                          borderRadius: 3,
+                          boxShadow: `0 8px 32px ${alpha(theme.palette.common.black, 0.2)}`,
+                          '&:hover': {
+                            bgcolor: alpha(theme.palette.common.white, 0.95),
+                            transform: 'translateY(-2px)',
+                            boxShadow: `0 12px 40px ${alpha(theme.palette.common.black, 0.3)}`,
+                          },
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        }}
+                      >
+                        Apply Now
+                      </Button>
+                    </Link>
+                    <Link href="/dashboard">
+                      <Button
+                        variant="outlined"
+                        size="large"
+                        sx={{
+                          borderColor: alpha(theme.palette.common.white, 0.5),
+                          color: 'white',
+                          px: 4,
+                          py: 1.5,
+                          fontSize: '1.1rem',
+                          fontWeight: 600,
+                          borderRadius: 3,
+                          borderWidth: 2,
+                          '&:hover': {
+                            bgcolor: alpha(theme.palette.common.white, 0.1),
+                            borderColor: 'white',
+                            borderWidth: 2,
+                            transform: 'translateY(-2px)',
+                          },
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        Learn More
+                      </Button>
+                    </Link>
+                  </Stack>
+                </CardContent>
+              </Card>
 
               {/* Scenario Comparison */}
               {scenarios.length > 0 && (

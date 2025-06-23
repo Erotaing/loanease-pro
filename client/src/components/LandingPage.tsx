@@ -329,280 +329,194 @@ const LandingPage: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-            opacity: 0.3,
+            background: 'url("/api/placeholder/1920/1080") center/cover',
+            opacity: 0.1,
+            zIndex: 0,
           },
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
           <Grid container spacing={6} alignItems="center">
-            <Grid size={{ xs: 12, lg: 6 }}>
-              <Box sx={{ position: 'relative', zIndex: 1 }}>
-                <Chip
-                  label="#1 Loan Origination Platform"
+            <Grid size={{ xs: 12, md: 6 }}>
+              <Typography
+                variant="h1"
+                sx={{
+                  fontFamily: 'Poppins',
+                  fontWeight: 800,
+                  fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
+                  lineHeight: 1.1,
+                  mb: 3,
+                  background: 'linear-gradient(45deg, #ffffff 30%, #e3f2fd 90%)',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                }}
+              >
+                Transform Your Lending Business
+              </Typography>
+              <Typography
+                variant="h5"
+                sx={{
+                  mb: 4,
+                  opacity: 0.9,
+                  fontWeight: 400,
+                  lineHeight: 1.4,
+                }}
+              >
+                Streamline loan processing with AI-powered automation, advanced analytics, and enterprise-grade security.
+              </Typography>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 4 }}>
+                <Button
+                  component={Link}
+                  href="/register"
+                  variant="contained"
+                  size="large"
                   sx={{
-                    bgcolor: alpha(theme.palette.secondary.light, 0.2),
+                    bgcolor: 'white',
+                    color: 'primary.main',
+                    px: 4,
+                    py: 1.5,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    borderRadius: 3,
+                    boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+                    '&:hover': {
+                      bgcolor: 'grey.100',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+                    },
+                  }}
+                >
+                  Start Free Trial
+                </Button>
+                <Button
+                  component={Link}
+                  href="/contact"
+                  variant="outlined"
+                  size="large"
+                  sx={{
+                    borderColor: 'white',
+                    color: 'white',
+                    px: 4,
+                    py: 1.5,
+                    fontSize: '1.1rem',
+                    fontWeight: 600,
+                    borderRadius: 3,
+                    borderWidth: 2,
+                    '&:hover': {
+                      borderColor: 'white',
+                      bgcolor: alpha('#ffffff', 0.1),
+                      transform: 'translateY(-2px)',
+                    },
+                  }}
+                >
+                  Schedule Demo
+                </Button>
+              </Stack>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, flexWrap: 'wrap' }}>
+                <Chip
+                  icon={<CheckCircle />}
+                  label="No Setup Fees"
+                  sx={{
+                    bgcolor: alpha('#ffffff', 0.2),
                     color: 'white',
                     fontWeight: 600,
-                    mb: 3,
-                    border: `1px solid ${alpha(theme.palette.secondary.light, 0.3)}`,
+                    '& .MuiChip-icon': { color: 'white' },
                   }}
                 />
-                <Typography
-                  variant="h1"
-                  component="h1"
+                <Chip
+                  icon={<Verified />}
+                  label="Bank-Grade Security"
                   sx={{
-                    fontFamily: 'Poppins',
-                    fontWeight: 800,
-                    fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4rem', lg: '4.5rem' },
-                    lineHeight: 1.1,
-                    mb: 3,
+                    bgcolor: alpha('#ffffff', 0.2),
+                    color: 'white',
+                    fontWeight: 600,
+                    '& .MuiChip-icon': { color: 'white' },
                   }}
-                >
-                  Transform Your
-                  <br />
-                  <Box component="span" sx={{ color: theme.palette.secondary.light }}>
-                    Lending Business
-                  </Box>
-                </Typography>
-                <Typography
-                  variant="h5"
+                />
+                <Chip
+                  icon={<Support />}
+                  label="24/7 Support"
                   sx={{
-                    fontFamily: 'Inter',
-                    fontSize: { xs: '1.1rem', md: '1.4rem' },
-                    lineHeight: 1.6,
-                    mb: 4,
-                    color: alpha(theme.palette.common.white, 0.9),
-                    maxWidth: '600px',
+                    bgcolor: alpha('#ffffff', 0.2),
+                    color: 'white',
+                    fontWeight: 600,
+                    '& .MuiChip-icon': { color: 'white' },
                   }}
-                >
-                  Revolutionize your loan origination process with AI-powered automation, 
-                  real-time analytics, and enterprise-grade security. Process applications 
-                  90% faster while reducing operational costs.
-                </Typography>
-                
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ mb: 6 }}>
-                  <Link href="/apply" passHref>
-                    <Button
-                      variant="contained"
-                      size="large"
-                      endIcon={<ArrowForward />}
-                      sx={{
-                        bgcolor: 'white',
-                        color: theme.palette.primary.main,
-                        px: 4,
-                        py: 2,
-                        fontSize: '1.1rem',
-                        fontWeight: 700,
-                        borderRadius: 3,
-                        boxShadow: `0 8px 32px ${alpha(theme.palette.common.black, 0.2)}`,
-                        '&:hover': {
-                          bgcolor: alpha(theme.palette.common.white, 0.95),
-                          transform: 'translateY(-3px)',
-                          boxShadow: `0 12px 40px ${alpha(theme.palette.common.black, 0.3)}`,
-                        },
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                      }}
-                    >
-                      Start Free Trial
-                    </Button>
-                  </Link>
-                  <Link href="/dashboard" passHref>
-                    <Button
-                      variant="outlined"
-                      size="large"
-                      sx={{
-                        borderColor: alpha(theme.palette.common.white, 0.5),
-                        color: 'white',
-                        px: 4,
-                        py: 2,
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
-                        borderRadius: 3,
-                        borderWidth: 2,
-                        '&:hover': {
-                          bgcolor: alpha(theme.palette.common.white, 0.1),
-                          borderColor: 'white',
-                          borderWidth: 2,
-                          transform: 'translateY(-2px)',
-                        },
-                        transition: 'all 0.3s ease',
-                      }}
-                    >
-                      Watch Demo
-                    </Button>
-                  </Link>
-                </Stack>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Verified sx={{ color: theme.palette.secondary.light, fontSize: 20 }} />
-                    <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
-                      SOC 2 Compliant
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Star sx={{ color: '#FFD700', fontSize: 20 }} />
-                    <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
-                      4.9/5 Customer Rating
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CheckCircle sx={{ color: theme.palette.success.light, fontSize: 20 }} />
-                    <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
-                      99.9% Uptime
-                    </Typography>
-                  </Box>
-                </Box>
+                />
               </Box>
             </Grid>
-            
-            <Grid size={{ xs: 12, lg: 6 }}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Box
                 sx={{
                   position: 'relative',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: { xs: 400, md: 500, lg: 600 },
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: -20,
+                    left: -20,
+                    right: -20,
+                    bottom: -20,
+                    background: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+                    borderRadius: 4,
+                    zIndex: 0,
+                  },
                 }}
               >
-                {/* Background decorative elements */}
-                <Box
+                <Paper
+                  elevation={24}
                   sx={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    background: `radial-gradient(circle at center, ${alpha(theme.palette.secondary.light, 0.2)} 0%, transparent 70%)`,
-                    borderRadius: '50%',
-                    animation: 'pulse 4s ease-in-out infinite',
-                    '@keyframes pulse': {
-                      '0%, 100%': { transform: 'scale(1)', opacity: 0.7 },
-                      '50%': { transform: 'scale(1.1)', opacity: 0.4 },
-                    },
-                  }}
-                />
-                
-                {/* Main icon */}
-                <AccountBalance
-                  sx={{
-                    fontSize: { xs: 180, md: 240, lg: 300 },
-                    color: alpha(theme.palette.common.white, 0.15),
+                    p: 4,
+                    borderRadius: 4,
+                    background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
                     position: 'relative',
                     zIndex: 1,
-                    filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.1))',
-                  }}
-                />
-                
-                {/* Floating elements */}
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: '20%',
-                    right: '10%',
-                    bgcolor: alpha(theme.palette.success.main, 0.9),
-                    borderRadius: 2,
-                    p: 2,
-                    animation: 'float 6s ease-in-out infinite',
-                    '@keyframes float': {
-                      '0%, 100%': { transform: 'translateY(0px)' },
-                      '50%': { transform: 'translateY(-20px)' },
-                    },
                   }}
                 >
-                  <CheckCircle sx={{ color: 'white', fontSize: 24 }} />
-                </Box>
-                
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: '25%',
-                    left: '15%',
-                    bgcolor: alpha(theme.palette.secondary.main, 0.9),
-                    borderRadius: 2,
-                    p: 2,
-                    animation: 'float 6s ease-in-out infinite 2s',
-                  }}
-                >
-                  <TrendingUp sx={{ color: 'white', fontSize: 24 }} />
-                </Box>
-                
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    top: '60%',
-                    right: '25%',
-                    bgcolor: alpha(theme.palette.info.main, 0.9),
-                    borderRadius: 2,
-                    p: 2,
-                    animation: 'float 6s ease-in-out infinite 4s',
-                  }}
-                >
-                  <Speed sx={{ color: 'white', fontSize: 24 }} />
-                </Box>
+                  <Typography variant="h6" gutterBottom color="primary.main" fontWeight={700}>
+                    Quick Stats
+                  </Typography>
+                  <Grid container spacing={3}>
+                    {stats.map((stat, index) => (
+                      <Grid size={{ xs: 6 }} key={index}>
+                        <Stat {...stat} />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Paper>
               </Box>
             </Grid>
-          </Grid>
-        </Container>
-      </Box>
-
-      {/* Stats Section */}
-      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'primary.50' }}>
-        <Container maxWidth="xl">
-          <Grid container spacing={4}>
-            {stats.map((stat, index) => (
-              <Grid size={{ xs: 6, md: 3 }} key={index}>
-                <Stat {...stat} />
-              </Grid>
-            ))}
           </Grid>
         </Container>
       </Box>
 
       {/* Features Section */}
-      <Box sx={{ py: { xs: 10, md: 16 }, bgcolor: 'background.default' }}>
-        <Container maxWidth="xl">
-          <Box sx={{ textAlign: 'center', mb: 10 }}>
-            <Chip
-              label="Features"
-              sx={{
-                bgcolor: alpha(theme.palette.primary.main, 0.1),
-                color: 'primary.main',
-                fontWeight: 600,
-                mb: 3,
-                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-              }}
-            />
+      <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: 'grey.50' }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Typography
               variant="h2"
-              component="h2"
               sx={{
                 fontFamily: 'Poppins',
-                fontSize: { xs: '2.5rem', md: '3.5rem' },
-                fontWeight: 800,
-                mb: 3,
+                fontWeight: 700,
+                mb: 2,
                 color: 'primary.900',
+                fontSize: { xs: '2rem', md: '2.5rem' },
               }}
             >
               Why Choose LoanEase Pro?
             </Typography>
             <Typography
-              variant="h5"
-              sx={{ 
-                maxWidth: 700, 
-                mx: 'auto', 
-                fontWeight: 400,
-                color: 'text.secondary',
-                lineHeight: 1.6,
-              }}
+              variant="h6"
+              color="text.secondary"
+              sx={{ maxWidth: 600, mx: 'auto', lineHeight: 1.6 }}
             >
-              Experience the future of lending with our innovative platform designed 
-              to accelerate your business growth and enhance customer satisfaction.
+              Discover the features that make us the leading choice for modern lending institutions
             </Typography>
           </Box>
           <Grid container spacing={4}>
             {features.map((feature, index) => (
-              <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
                 <Feature {...feature} />
               </Grid>
             ))}
@@ -611,44 +525,27 @@ const LandingPage: React.FC = () => {
       </Box>
 
       {/* Testimonials Section */}
-      <Box sx={{ py: { xs: 10, md: 16 }, bgcolor: 'primary.50' }}>
-        <Container maxWidth="xl">
-          <Box sx={{ textAlign: 'center', mb: 10 }}>
-            <Chip
-              label="Testimonials"
-              sx={{
-                bgcolor: alpha(theme.palette.secondary.main, 0.1),
-                color: 'secondary.main',
-                fontWeight: 600,
-                mb: 3,
-                border: `1px solid ${alpha(theme.palette.secondary.main, 0.2)}`,
-              }}
-            />
+      <Box sx={{ py: { xs: 8, md: 12 } }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center', mb: 8 }}>
             <Typography
               variant="h2"
-              component="h2"
               sx={{
                 fontFamily: 'Poppins',
-                fontSize: { xs: '2.5rem', md: '3.5rem' },
-                fontWeight: 800,
-                mb: 3,
+                fontWeight: 700,
+                mb: 2,
                 color: 'primary.900',
+                fontSize: { xs: '2rem', md: '2.5rem' },
               }}
             >
-              What Our Customers Say
+              What Our Clients Say
             </Typography>
             <Typography
-              variant="h5"
-              sx={{ 
-                maxWidth: 700, 
-                mx: 'auto', 
-                fontWeight: 400,
-                color: 'text.secondary',
-                lineHeight: 1.6,
-              }}
+              variant="h6"
+              color="text.secondary"
+              sx={{ maxWidth: 600, mx: 'auto', lineHeight: 1.6 }}
             >
-              Join thousands of satisfied customers who have transformed their 
-              lending operations with LoanEase Pro.
+              Join thousands of satisfied customers who have transformed their lending operations
             </Typography>
           </Box>
           <Grid container spacing={4}>
@@ -664,101 +561,77 @@ const LandingPage: React.FC = () => {
       {/* CTA Section */}
       <Box
         sx={{
-          py: { xs: 10, md: 16 },
-          background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 50%, ${theme.palette.secondary.main} 100%)`,
+          py: { xs: 8, md: 12 },
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
           color: 'white',
           position: 'relative',
           overflow: 'hidden',
         }}
       >
-        <Container maxWidth="lg">
-          <Box sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
-            <Typography
-              variant="h2"
-              component="h2"
+        <Container maxWidth="md" sx={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
+          <Typography
+            variant="h2"
+            sx={{
+              fontFamily: 'Poppins',
+              fontWeight: 700,
+              mb: 3,
+              fontSize: { xs: '2rem', md: '2.5rem' },
+            }}
+          >
+            Ready to Get Started?
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{ mb: 4, opacity: 0.9, lineHeight: 1.6 }}
+          >
+            Join thousands of lending professionals who trust LoanEase Pro to streamline their operations
+          </Typography>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} justifyContent="center">
+            <Button
+              component={Link}
+              href="/register"
+              variant="contained"
+              size="large"
               sx={{
-                fontFamily: 'Poppins',
-                fontSize: { xs: '2.5rem', md: '3.5rem' },
-                fontWeight: 800,
-                mb: 3,
+                bgcolor: 'white',
+                color: 'primary.main',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                borderRadius: 3,
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                  transform: 'translateY(-2px)',
+                },
               }}
             >
-              Ready to Transform Your
-              <br />
-              <Box component="span" sx={{ color: theme.palette.secondary.light }}>
-                Lending Process?
-              </Box>
-            </Typography>
-            <Typography
-              variant="h5"
+              Start Your Free Trial
+              <ArrowForward sx={{ ml: 1 }} />
+            </Button>
+            <Button
+              component={Link}
+              href="/contact"
+              variant="outlined"
+              size="large"
               sx={{
-                mb: 6,
-                opacity: 0.9,
-                maxWidth: 600,
-                mx: 'auto',
-                lineHeight: 1.6,
+                borderColor: 'white',
+                color: 'white',
+                px: 4,
+                py: 1.5,
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                borderRadius: 3,
+                borderWidth: 2,
+                '&:hover': {
+                  borderColor: 'white',
+                  bgcolor: alpha('#ffffff', 0.1),
+                },
               }}
             >
-              Join thousands of financial institutions already using LoanEase Pro 
-              to streamline their operations and delight their customers.
-            </Typography>
-            <Stack 
-              direction={{ xs: 'column', sm: 'row' }} 
-              spacing={3} 
-              sx={{ justifyContent: 'center' }}
-            >
-              <Link href="/apply" passHref>
-                <Button
-                  variant="contained"
-                  size="large"
-                  endIcon={<ArrowForward />}
-                  sx={{
-                    bgcolor: 'white',
-                    color: theme.palette.primary.main,
-                    px: 6,
-                    py: 2.5,
-                    fontSize: '1.2rem',
-                    fontWeight: 700,
-                    borderRadius: 3,
-                    boxShadow: `0 8px 32px ${alpha(theme.palette.common.black, 0.2)}`,
-                    '&:hover': {
-                      bgcolor: alpha(theme.palette.common.white, 0.95),
-                      transform: 'translateY(-3px)',
-                      boxShadow: `0 12px 40px ${alpha(theme.palette.common.black, 0.3)}`,
-                    },
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  }}
-                >
-                  Start Your Free Trial
-                </Button>
-              </Link>
-              <Link href="/contact" passHref>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  sx={{
-                    borderColor: alpha(theme.palette.common.white, 0.5),
-                    color: 'white',
-                    px: 6,
-                    py: 2.5,
-                    fontSize: '1.2rem',
-                    fontWeight: 600,
-                    borderRadius: 3,
-                    borderWidth: 2,
-                    '&:hover': {
-                      bgcolor: alpha(theme.palette.common.white, 0.1),
-                      borderColor: 'white',
-                      borderWidth: 2,
-                      transform: 'translateY(-2px)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  Contact Sales
-                </Button>
-              </Link>
-            </Stack>
-          </Box>
+              Contact Sales
+            </Button>
+          </Stack>
         </Container>
       </Box>
     </Box>

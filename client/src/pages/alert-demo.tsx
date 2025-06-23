@@ -38,7 +38,7 @@ const AlertDemo: React.FC = () => {
     };
 
     const newAlert = {
-      id: Math.floor(Math.random() * 1000000),
+      id: Date.now() + alerts.length, // Use timestamp + length for unique ID
       ...createAlert[type](messages[type]),
       dismissible: true,
     };

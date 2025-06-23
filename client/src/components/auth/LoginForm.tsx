@@ -284,37 +284,37 @@ const LoginForm: React.FC = () => {
                 }}
               >
                 Don't have an account?{' '}
-                <Link href="/register" passHref>
-                  <MuiLink
-                    sx={{
-                      color: theme.palette.primary.main,
-                      fontWeight: 600,
-                      textDecoration: 'none',
-                      '&:hover': {
-                        textDecoration: 'underline'
-                      }
-                    }}
-                  >
-                    Sign up here
-                  </MuiLink>
-                </Link>
+                <MuiLink
+                  component={Link}
+                  href="/register"
+                  sx={{
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    '&:hover': {
+                      textDecoration: 'underline'
+                    }
+                  }}
+                >
+                  Sign up here
+                </MuiLink>
               </Typography>
 
               <Typography variant="body2">
-                <Link href="/forgot-password" passHref>
-                  <MuiLink
-                    sx={{
-                      color: theme.palette.text.secondary,
-                      textDecoration: 'none',
-                      '&:hover': {
-                        color: theme.palette.primary.main,
+                <MuiLink
+                  component={Link}
+                  href="/forgot-password"
+                  sx={{
+                    color: theme.palette.text.secondary,
+                    textDecoration: 'none',
+                    '&:hover': {
+                      color: theme.palette.primary.main,
                         textDecoration: 'underline'
                       }
                     }}
                   >
                     Forgot your password?
                   </MuiLink>
-                </Link>
               </Typography>
             </Box>
           </CardContent>

@@ -36,6 +36,7 @@ import {
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import { formatCurrency, formatDate } from '../lib/utils';
+import Layout from '../components/Layout';
 
 interface Borrower {
   id: string;
@@ -213,7 +214,8 @@ const BorrowersPage: React.FC = () => {
   );
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Layout>
+      <Container maxWidth="xl" sx={{ py: 4 }}>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom>
@@ -470,7 +472,8 @@ const BorrowersPage: React.FC = () => {
           </TableContainer>
         </CardContent>
       </Card>
-    </Container>
+      </Container>
+    </Layout>
   );
 };
 
